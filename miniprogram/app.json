@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/vote/vote"
+  ],
+  "window": {
+    "backgroundColor": "#FFFFFF",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#5586ff",
+    "navigationBarTitleText": "云开发投票",
+    "navigationBarTextStyle": "white"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

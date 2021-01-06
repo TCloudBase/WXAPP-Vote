@@ -1,0 +1,25 @@
+<view class="spinner" wx:if="{{(project==null || user==null) && !info}}"></view>
+
+<view class="showinfo" wx:if="{{info}}">
+  <text>{{info}}</text>
+  <navigator target="miniProgram" open-type="exit">关闭小程序</navigator>
+</view>
+
+<view class="container" wx:if="{{project && user && !info}}">
+  <view class="title">{{project.title}}</view>
+  <view class="options">
+    <button wx:for="{{project.options}}" wx:key="index" 
+            type="{{load?(load[index]?'loading':''):(user[index]?'select':'')}}" 
+            bindtap="vote" data-i="{{index}}">
+      <text>{{item}}</text>
+      <span style="{{util.hidden(user)?'display:none;':''}}">{{project.number[index]?project.number[index]:0}}票</span>
+    </button>
+  </view>
+</view>
+
+<wxs module="util">
+function hidden(user){
+  return JSON.stringify(user)=="{}";
+}
+module.exports = {hidden:hidden}
+</wxs>
