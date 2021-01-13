@@ -1,0 +1,55 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>投票实时展示</title>
+  <script src="echarts.min.js"></script>
+  <script src="https://res.wx.qq.com/open/js/cloudbase/1.1.0/cloud.js"></script>
+</head>
+
+<body>
+  <div id="main" style="width: 800px;height:550px;"></div>
+  <script type="text/javascript">
+    var myChart = echarts.init(document.getElementById('main'));
+    window.onload = async function () {
+      var tcb = new cloud.Cloud({
+        identityless: true,
+        resourceAppid: '小程序APPID',
+        resourceEnv: '小程序下提供服务的云开发环境ID',
+      })
+
+      await tcb.init()
+
+      await tcb.database().collection('vote_mess').where({
+        code: 'SIN'
+      }).watch({
+        onChange(res) {
+          console.log(res)
+          let tempdata = res.docs[0];
+          let numbers = []
+          for(let i in tempdata.options){
+            numbers.push(tempdata.number[i]?tempdata.number[i]:0)
+          }
+          setOption(tempdata.options, numbers)
+        },
+        onError(err) {
+          console.error(err)
+        }
+      })
+    }
+    function setOption(options, number) {
+      myChart.setOption({
+        xAxis: {
+          data: options
+        },
+        yAxis: {},
+        series: [{
+          type: 'bar',
+          data: number
+        }]
+      });
+    }
+  </script>
+</body>
+
+</html>
