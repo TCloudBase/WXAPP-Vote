@@ -15,13 +15,23 @@ exports.main = async (event, context) => {
     let project = result[0].project[code];
     let newData = event.select;
     let diff = {}
-    for(let i in newData){
+    for(let i in newData){     
       diff[i] = _.inc(1)
     }
     for(let i in project){
       if(diff[i]) delete diff[i];
       else diff[i] = _.inc(-1)
     }
+    if(Object.keys(diff).length==0){
+      return newData;
+    }
+    await db.collection('vote_mess').where({
+      code:code
+    }).update({
+      data:{
+        number:diff
+      }
+    })
     await db.collection('vote_user').where({
       openid:openid
     }).update({
@@ -31,13 +41,7 @@ exports.main = async (event, context) => {
         }
       }
     })
-    await db.collection('vote_mess').where({
-      code:code
-    }).update({
-      data:{
-        number:diff
-      }
-    })
+    
     return newData
   }
 }
