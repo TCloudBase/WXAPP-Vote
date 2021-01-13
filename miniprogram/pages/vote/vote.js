@@ -2,6 +2,9 @@
 // 用户，调用云函数
 // 投票，调用云函数，自己和项目票数自增
 
+// JS-SDK : 未登录，匿名登录，邮件登录，手机登录
+// WEB-SDK: 未登录、微信登录（服务号）
+
 //=================虚拟数据源====================
 var tempdata = {
   SIN: {
@@ -67,6 +70,7 @@ Page({
       },
       success(res){
         setUser(res.result)
+        that.one = JSON.stringify(res.result)
       }
     })
   },
@@ -78,12 +82,24 @@ Page({
     if (that.data.user[e.currentTarget.dataset.i] == true) {
       return;
     }
-    if (that.data.project.one && JSON.stringify(that.data.user) != '{}') {
+    if (that.data.project.one && that.one != '{}') {
       showModel('S_ONE')
       return;
     }
-    let tempvote = {
-      [e.currentTarget.dataset.i]: true
+    let tempvote = {}
+    if(e.currentTarget.dataset.mul){
+      for(let i in that.data.user){
+        if(that.data.user[i]==true){
+          tempvote[i] = true
+        }
+      }
+      if(Object.keys(tempvote).length==0){
+        showModel('S_EMPTY')
+        return;
+      }
+    }
+    else{
+       tempvote[e.currentTarget.dataset.i] = true
     }
     that.setData({
       load: tempvote
@@ -96,7 +112,14 @@ Page({
       },
       success(res){
         setUser(res.result)
+        that.one = JSON.stringify(res.result)
       }
+    })
+  },
+  select(e) {
+    let key = 'user.'+e.currentTarget.dataset.i
+    that.setData({
+      [key]:!that.data.user[e.currentTarget.dataset.i]
     })
   },
   onShareAppMessage() {
@@ -113,7 +136,8 @@ const INFO = {
   S_ONE: ['项目设置只能投票一次', '提示'],
   S_CLOSE: ['当前不能投票，请等待投票开启', '提示'],
   S_LOAD: ['请等待本次投票操作完毕后再变更选择', '提示'],
-  S_FAIL: ['在操作时遇到了一些网络问题，请稍后再试', '网络错误']
+  S_FAIL: ['在操作时遇到了一些网络问题，请稍后再试', '网络错误'],
+  S_EMPTY: ['多选不能为空，请至少选择一个','提示']
 }
 function setInfo(info) {
   that.setData({

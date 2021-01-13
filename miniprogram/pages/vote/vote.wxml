@@ -10,11 +10,12 @@
   <view class="options">
     <button wx:for="{{project.options}}" wx:key="index" 
             type="{{load?(load[index]?'loading':''):(user[index]?'select':'')}}" 
-            bindtap="vote" data-i="{{index}}">
+            bindtap="{{project.once?'vote':'select'}}" data-i="{{index}}">
       <text>{{item}}</text>
       <span style="{{util.hidden(user)?'display:none;':''}}">{{project.number[index]?project.number[index]:0}}票</span>
     </button>
   </view>
+  <button wx:if="{{!project.once}}"  bindtap="vote" data-mul="true">投票</button>
 </view>
 
 <wxs module="util">
